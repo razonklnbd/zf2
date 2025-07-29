@@ -328,7 +328,7 @@ abstract class AbstractAdapter extends BaseAdapter
                 $resultIdentities[] = $row;
             }
         } catch (\Exception $e) {
-            #die('<pre>'.print_r($statement, true));
+            #die('@'.__LINE__.': '.__FILE__.'<pre>'.print_r($statement, true));
             throw new Exception\RuntimeException(
                 'The supplied parameters to DbTable failed to '
                 . 'produce a valid sql statement, please check table and column names '

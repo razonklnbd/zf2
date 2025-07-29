@@ -35,7 +35,7 @@ class SplQueue extends \SplQueue implements Serializable
      *
      * @return string
      */
-    public function serialize()
+    public function serialize(): string
     {
         return serialize($this->toArray());
     }
@@ -46,10 +46,20 @@ class SplQueue extends \SplQueue implements Serializable
      * @param  string $data
      * @return void
      */
-    public function unserialize($data)
+    public function unserialize($data): void
     {
         foreach (unserialize($data) as $item) {
             $this->push($item);
         }
+    }
+    public function __serialize(): array
+    {
+        // Get all accessible (public + protected + private) properties
+        return $this->toArray();
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->unserialize(serialize($data));
     }
 }

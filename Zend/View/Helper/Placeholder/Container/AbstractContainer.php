@@ -277,6 +277,7 @@ abstract class AbstractContainer extends ArrayObject
      * @param  mixed $value
      * @return self
      */
+    #[\ReturnTypeWillChange]
     public function append($value)
     {
         parent::append($value);

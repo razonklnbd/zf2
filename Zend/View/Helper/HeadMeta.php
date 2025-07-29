@@ -371,7 +371,7 @@ class HeadMeta extends Placeholder\Container\AbstractStandalone
      * @throws Exception\InvalidArgumentException
      * @return void
      */
-    public function offsetSet($index, $value)
+    public function offsetSet($index, $value): void
     {
         if (!$this->isValid($value)) {
             throw  new Exception\InvalidArgumentException(
@@ -379,7 +379,7 @@ class HeadMeta extends Placeholder\Container\AbstractStandalone
             );
         }
 
-        return $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($index, $value);
     }
 
     /**
@@ -389,13 +389,13 @@ class HeadMeta extends Placeholder\Container\AbstractStandalone
      * @throws Exception\InvalidArgumentException
      * @return void
      */
-    public function offsetUnset($index)
+    public function offsetUnset($index): void
     {
         if (!in_array($index, $this->getContainer()->getKeys())) {
             throw new Exception\InvalidArgumentException('Invalid index passed to offsetUnset()');
         }
 
-        return $this->getContainer()->offsetUnset($index);
+        $this->getContainer()->offsetUnset($index);
     }
 
     /**

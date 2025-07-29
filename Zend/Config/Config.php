@@ -199,7 +199,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * @see    Countable::count()
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->data);
     }
@@ -210,7 +210,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * @see    Iterator::current()
      * @return mixed
      */
-    public function current()
+    public function current(): mixed
     {
         $this->skipNextIteration = false;
         return current($this->data);
@@ -222,7 +222,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * @see    Iterator::key()
      * @return mixed
      */
-    public function key()
+    public function key(): int
     {
         return key($this->data);
     }
@@ -233,7 +233,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * @see    Iterator::next()
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         if ($this->skipNextIteration) {
             $this->skipNextIteration = false;
@@ -249,7 +249,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * @see    Iterator::rewind()
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->skipNextIteration = false;
         reset($this->data);
@@ -261,7 +261,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * @see    Iterator::valid()
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return ($this->key() !== null);
     }
@@ -273,7 +273,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * @param  mixed $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->__isset($offset);
     }
@@ -285,7 +285,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * @param  mixed $offset
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->__get($offset);
     }
@@ -298,7 +298,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * @param  mixed $value
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->__set($offset, $value);
     }
@@ -310,7 +310,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * @param  mixed $offset
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->__unset($offset);
     }

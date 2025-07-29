@@ -19,7 +19,7 @@ use Serializable;
  *
  * Extends version-specific "abstract" implementation.
  */
-class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Countable
+class ArrayObject implements IteratorAggregate, ArrayAccess, Countable
 {
     /**
      * Properties of the object have their normal functionality
@@ -167,6 +167,7 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return count($this->storage);
@@ -223,6 +224,7 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
      *
      * @return \Iterator
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         $class = $this->iteratorClass;
@@ -276,6 +278,7 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
      * @param  mixed $key
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($key)
     {
         return isset($this->storage[$key]);
@@ -287,6 +290,7 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
      * @param  mixed $key
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function &offsetGet($key)
     {
         $ret = null;
@@ -305,6 +309,7 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
      * @param  mixed $value
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($key, $value)
     {
         $this->storage[$key] = $value;
@@ -316,6 +321,7 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
      * @param  mixed $key
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($key)
     {
         if ($this->offsetExists($key)) {
@@ -323,6 +329,12 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
         }
     }
 
+    public function __serialize() {
+        return get_object_vars($this);
+    }
+    public function __unserialize(array $data) {
+        return $this->unserializeX($data);
+    }
     /**
      * Serialize an ArrayObject
      *
@@ -330,7 +342,7 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
      */
     public function serialize()
     {
-        return serialize(get_object_vars($this));
+        return serialize($this->__serialize());
     }
 
     /**
@@ -404,7 +416,11 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
      */
     public function unserialize($data)
     {
-        $ar                        = unserialize($data);
+        return $this->unserializeX(unserialize($data));
+    }
+    private function unserializeX(array $data)
+    {
+        $ar                        = $data;
         $this->protectedProperties = array_keys(get_object_vars($this));
 
         $this->setFlags($ar['flag']);
@@ -438,4 +454,7 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
             if(true==$need2continue) continue;
         }
     }
+
+    
+
 }

@@ -52,6 +52,7 @@ class AggregateResolver implements Countable, IteratorAggregate, ResolverInterfa
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return $this->queue->count();
@@ -62,6 +63,7 @@ class AggregateResolver implements Countable, IteratorAggregate, ResolverInterfa
      *
      * @return PriorityQueue
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return $this->queue;
@@ -87,6 +89,7 @@ class AggregateResolver implements Countable, IteratorAggregate, ResolverInterfa
      * @param  null|Renderer $renderer
      * @return false|string
      */
+    #[\ReturnTypeWillChange]
     public function resolve($name, Renderer $renderer = null)
     {
         $this->lastLookupFailure      = false;

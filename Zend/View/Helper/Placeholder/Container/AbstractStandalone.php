@@ -313,7 +313,7 @@ abstract class AbstractStandalone extends AbstractHelper implements
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         $container = $this->getContainer();
         return count($container);
@@ -325,7 +325,7 @@ abstract class AbstractStandalone extends AbstractHelper implements
      * @param  string|int $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->getContainer()->offsetExists($offset);
     }
@@ -336,7 +336,7 @@ abstract class AbstractStandalone extends AbstractHelper implements
      * @param  string|int $offset
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->getContainer()->offsetGet($offset);
     }
@@ -348,9 +348,9 @@ abstract class AbstractStandalone extends AbstractHelper implements
      * @param  mixed $value
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
-        return $this->getContainer()->offsetSet($offset, $value);
+        $this->getContainer()->offsetSet($offset, $value);
     }
 
     /**
@@ -359,9 +359,9 @@ abstract class AbstractStandalone extends AbstractHelper implements
      * @param  string|int $offset
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
-        return $this->getContainer()->offsetUnset($offset);
+        $this->getContainer()->offsetUnset($offset);
     }
 
     /**
@@ -369,7 +369,7 @@ abstract class AbstractStandalone extends AbstractHelper implements
      *
      * @return \Iterator
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return $this->getContainer()->getIterator();
     }

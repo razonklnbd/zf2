@@ -20,7 +20,7 @@ use Traversable;
  * Defines the minimum requirements for handling userland, in-script session
  * storage (e.g., the $_SESSION superglobal array).
  */
-interface StorageInterface extends Traversable, ArrayAccess, Serializable, Countable
+interface StorageInterface extends Traversable, ArrayAccess, Countable
 {
     public function getRequestAccessTime();
 
@@ -38,4 +38,8 @@ interface StorageInterface extends Traversable, ArrayAccess, Serializable, Count
 
     public function fromArray(array $array);
     public function toArray($metaData = false);
+
+    public function doSerialize(): array;
+    public function doUnSerialize(array $data): void;
+
 }

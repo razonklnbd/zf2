@@ -67,7 +67,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * @param  string $name
      * @return bool
      */
-    public function offsetExists($name)
+    public function offsetExists($name): bool
     {
         return (isset($this->data[$name]));
     }
@@ -78,7 +78,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * @param  string $name
      * @return mixed
      */
-    public function offsetGet($name)
+    public function offsetGet($name): mixed
     {
         return (isset($this->data[$name])) ? $this->data[$name] : null;
     }
@@ -101,7 +101,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * @param mixed $maxLength
      * @throws Exception\InvalidArgumentException
      */
-    public function offsetSet($name, $value, $errata = null, $maxLength = null)
+    public function offsetSet($name, $value, $errata = null, $maxLength = null): void
     {
         $position = false;
 
@@ -143,13 +143,13 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * @param  string $name
      * @return ParameterContainer
      */
-    public function offsetUnset($name)
+    public function offsetUnset($name): void
     {
         if (is_int($name) && isset($this->positions[$name])) {
             $name = $this->positions[$name];
         }
         unset($this->data[$name]);
-        return $this;
+        #return $this;
     }
 
     /**
@@ -337,7 +337,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->data);
     }
@@ -347,7 +347,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      *
      * @return mixed
      */
-    public function current()
+    public function current(): int
     {
         return current($this->data);
     }
@@ -357,9 +357,9 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      *
      * @return mixed
      */
-    public function next()
+    public function next(): void
     {
-        return next($this->data);
+        next($this->data);
     }
 
     /**
@@ -367,7 +367,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      *
      * @return mixed
      */
-    public function key()
+    public function key(): mixed
     {
         return key($this->data);
     }
@@ -377,7 +377,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return (current($this->data) !== false);
     }
@@ -385,7 +385,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Rewind
      */
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->data);
     }

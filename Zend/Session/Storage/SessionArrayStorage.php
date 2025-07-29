@@ -31,7 +31,7 @@ class SessionArrayStorage extends AbstractSessionArrayStorage
      * @param  mixed $key
      * @return mixed
      */
-    public function &offsetGet($key)
+    public function &offsetGet($key): mixed
     {
         return $_SESSION[$key];
     }

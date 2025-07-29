@@ -179,7 +179,7 @@ class TreeRouteStack extends SimpleRouteStack
             $priority = (isset($route->priority) ? $route->priority : null);
 
             $route = $this->routePluginManager->get('part', $options);
-            $route->priority = $priority;
+            @$route->priority = $priority;
         }
 
         return $route;

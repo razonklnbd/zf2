@@ -19,7 +19,7 @@ use Zend\Session\Exception;
  * Replaces the $_SESSION superglobal with an ArrayObject that allows for
  * property access, metadata storage, locking, and immutability.
  */
-abstract class AbstractSessionArrayStorage implements
+abstract class AbstractSessionArrayStorage extends SkSerializable implements
     IteratorAggregate,
     StorageInterface,
     StorageInitializationInterface
@@ -116,7 +116,7 @@ abstract class AbstractSessionArrayStorage implements
      * @param  mixed   $key
      * @return bool
      */
-    public function offsetExists($key)
+    public function offsetExists($key): bool
     {
         return isset($_SESSION[$key]);
     }
@@ -127,13 +127,13 @@ abstract class AbstractSessionArrayStorage implements
      * @param  mixed $key
      * @return mixed
      */
-    public function offsetGet($key)
+    public function offsetGet($key): mixed
     {
         if (isset($_SESSION[$key])) {
             return $_SESSION[$key];
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -143,7 +143,7 @@ abstract class AbstractSessionArrayStorage implements
      * @param  mixed $value
      * @return void
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void
     {
         $_SESSION[$key] = $value;
     }
@@ -154,7 +154,7 @@ abstract class AbstractSessionArrayStorage implements
      * @param  mixed $key
      * @return void
      */
-    public function offsetUnset($key)
+    public function offsetUnset($key): void
     {
         unset($_SESSION[$key]);
     }
@@ -164,7 +164,7 @@ abstract class AbstractSessionArrayStorage implements
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($_SESSION);
     }
@@ -195,7 +195,7 @@ abstract class AbstractSessionArrayStorage implements
      *
      * @return ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return new ArrayIterator($_SESSION);
     }
@@ -483,4 +483,8 @@ abstract class AbstractSessionArrayStorage implements
 
         return $values;
     }
+
+
+
+
 }

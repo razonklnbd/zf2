@@ -946,7 +946,7 @@ class ServiceManager implements ServiceLocatorInterface
             #die($e->getCode().': '.$e->getMessage().' @'.__LINE__.': '.__FILE__);
             throw new Exception\ServiceNotCreatedException(
                 sprintf('An exception was raised while creating "%s"; no instance returned [err: "%s" | code: %s]', $rName, $e->getMessage(), $e->getCode()),
-                null,
+                0,
                 $e
             );
         }

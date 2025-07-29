@@ -138,7 +138,7 @@ class Result implements Iterator, ResultInterface
      * Get the data
      * @return array
      */
-    public function current()
+    public function current(): mixed
     {
         if ($this->currentComplete) {
             return $this->currentData;
@@ -154,12 +154,12 @@ class Result implements Iterator, ResultInterface
      *
      * @return mixed
      */
-    public function next()
+    public function next(): void
     {
         $this->currentData = $this->resource->fetch($this->fetchMode);
         $this->currentComplete = true;
         $this->position++;
-        return $this->currentData;
+        #return $this->currentData;
     }
 
     /**
@@ -167,7 +167,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return mixed
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->position;
     }
@@ -176,7 +176,7 @@ class Result implements Iterator, ResultInterface
      * @throws Exception\RuntimeException
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->statementMode == self::STATEMENT_MODE_FORWARD && $this->position > 0) {
             throw new Exception\RuntimeException(
@@ -193,7 +193,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return ($this->currentData !== false);
     }
@@ -203,7 +203,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         if (is_int($this->rowCount)) {
             return $this->rowCount;
@@ -213,7 +213,7 @@ class Result implements Iterator, ResultInterface
         } else {
             $this->rowCount = (int) $this->resource->rowCount();
         }
-        return $this->rowCount;
+        return intval($this->rowCount);
     }
 
     /**
