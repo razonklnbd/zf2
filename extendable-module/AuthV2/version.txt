@@ -1,0 +1,9 @@
+master copy started 20190903
+master copy here...
+
+implemented at:
+1. /media/shkhan/works/workspace/web_application/trade_food_web/dev/application/app-src/applications/WemproMarketplace/module/AuthV2
+2. /media/shkhan/works/workspace/web_application/trade_food_web/dev/application/app-src/applications/DataSyncModule/module/AuthV2
+
+for ZF3 /media/shkhan/works/workspace/web_application/mess-management/web-app/application/app-src/applications/MessMember/module/AuthV2Zf3
+
