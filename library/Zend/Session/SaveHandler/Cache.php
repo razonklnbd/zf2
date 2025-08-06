@@ -54,7 +54,7 @@ class Cache implements SaveHandlerInterface
      * @param string $name
      * @return bool
      */
-    public function open($savePath, $name)
+    public function open($savePath, $name): bool
     {
         // @todo figure out if we want to use these
         $this->sessionSavePath = $savePath;
@@ -68,7 +68,7 @@ class Cache implements SaveHandlerInterface
      *
      * @return bool
      */
-    public function close()
+    public function close(): bool
     {
         return true;
     }
@@ -79,7 +79,7 @@ class Cache implements SaveHandlerInterface
      * @param string $id
      * @return string
      */
-    public function read($id)
+    public function read($id): string|false
     {
         return $this->getCacheStorage()->getItem($id);
     }
@@ -91,7 +91,7 @@ class Cache implements SaveHandlerInterface
      * @param string $data
      * @return bool
      */
-    public function write($id, $data)
+    public function write($id, $data): bool
     {
         return $this->getCacheStorage()->setItem($id, $data);
     }
@@ -102,7 +102,7 @@ class Cache implements SaveHandlerInterface
      * @param string $id
      * @return bool
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         return $this->getCacheStorage()->removeItem($id);
     }
@@ -113,13 +113,13 @@ class Cache implements SaveHandlerInterface
      * @param int $maxlifetime
      * @return bool
      */
-    public function gc($maxlifetime)
+    public function gc($maxlifetime): int|false
     {
         $cache = $this->getCacheStorage();
         if ($cache instanceof ClearExpiredCacheStorage) {
             return $cache->clearExpired();
         }
-        return true;
+        return 1;
     }
 
     /**

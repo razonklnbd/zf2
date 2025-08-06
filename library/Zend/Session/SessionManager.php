@@ -478,6 +478,7 @@ class SessionManager extends AbstractManager
      */
     protected function registerSaveHandler(SaveHandler\SaveHandlerInterface $saveHandler)
     {
+        /* disable date 20250805 by sk for php 8 compatibility
         return session_set_save_handler(
             array($saveHandler, 'open'),
             array($saveHandler, 'close'),
@@ -486,5 +487,8 @@ class SessionManager extends AbstractManager
             array($saveHandler, 'destroy'),
             array($saveHandler, 'gc')
         );
+        # */
+        // Register the custom session handler
+        session_set_save_handler($saveHandler, true);
     }
 }

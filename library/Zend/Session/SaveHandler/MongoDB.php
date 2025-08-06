@@ -81,7 +81,7 @@ class MongoDB implements SaveHandlerInterface
      * @param string $name
      * @return bool
      */
-    public function open($savePath, $name)
+    public function open($savePath, $name): bool
     {
         // Note: session save path is not used
         $this->sessionName = $name;
@@ -95,7 +95,7 @@ class MongoDB implements SaveHandlerInterface
      *
      * @return bool
      */
-    public function close()
+    public function close(): bool
     {
         return true;
     }
@@ -106,7 +106,7 @@ class MongoDB implements SaveHandlerInterface
      * @param string $id
      * @return string
      */
-    public function read($id)
+    public function read($id): string|false
     {
         $session = $this->mongoCollection->findOne(array(
             '_id' => $id,
@@ -122,7 +122,7 @@ class MongoDB implements SaveHandlerInterface
             $this->destroy($id);
         }
 
-        return '';
+        return false;
     }
 
     /**
@@ -132,7 +132,7 @@ class MongoDB implements SaveHandlerInterface
      * @param string $data
      * @return bool
      */
-    public function write($id, $data)
+    public function write($id, $data): bool
     {
         $saveOptions = array_replace(
             $this->options->getSaveOptions(),
@@ -167,7 +167,7 @@ class MongoDB implements SaveHandlerInterface
      * @param string $id
      * @return bool
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         $result = $this->mongoCollection->remove(array(
             '_id' => $id,
@@ -190,7 +190,7 @@ class MongoDB implements SaveHandlerInterface
      * @param int $maxlifetime
      * @return bool
      */
-    public function gc($maxlifetime)
+    public function gc($maxlifetime): int|false
     {
         /* Note: unlike DbTableGateway, we do not use the lifetime field in
          * each document. Doing so would require a $where query to work with the

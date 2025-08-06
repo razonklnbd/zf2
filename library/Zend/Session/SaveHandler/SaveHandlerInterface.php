@@ -14,7 +14,7 @@ namespace Zend\Session\SaveHandler;
  *
  * @see        http://php.net/session_set_save_handler
  */
-interface SaveHandlerInterface
+interface SaveHandlerInterface extends \SessionHandlerInterface
 {
     /**
      * Open Session - retrieve resources
@@ -22,20 +22,20 @@ interface SaveHandlerInterface
      * @param string $savePath
      * @param string $name
      */
-    public function open($savePath, $name);
+    public function open($savePath, $name): bool;
 
     /**
      * Close Session - free resources
      *
      */
-    public function close();
+    public function close(): bool;
 
     /**
      * Read session data
      *
      * @param string $id
      */
-    public function read($id);
+    public function read($id): string|false;
 
     /**
      * Write Session - commit data to resource
@@ -43,7 +43,7 @@ interface SaveHandlerInterface
      * @param string $id
      * @param mixed $data
      */
-    public function write($id, $data);
+    public function write($id, $data): bool;
 
     /**
      * Destroy Session - remove data from resource for
@@ -51,7 +51,7 @@ interface SaveHandlerInterface
      *
      * @param string $id
      */
-    public function destroy($id);
+    public function destroy($id): bool;
 
     /**
      * Garbage Collection - remove old session data older
@@ -59,5 +59,5 @@ interface SaveHandlerInterface
      *
      * @param int $maxlifetime
      */
-    public function gc($maxlifetime);
+    public function gc($maxlifetime): int|false;
 }

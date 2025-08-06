@@ -67,7 +67,7 @@ class DbTableGateway implements SaveHandlerInterface
      * @param  string $name
      * @return bool
      */
-    public function open($savePath, $name)
+    public function open($savePath, $name): bool
     {
         $this->sessionSavePath = $savePath;
         $this->sessionName     = $name;
@@ -81,7 +81,7 @@ class DbTableGateway implements SaveHandlerInterface
      *
      * @return bool
      */
-    public function close()
+    public function close(): bool
     {
         return true;
     }
@@ -92,7 +92,7 @@ class DbTableGateway implements SaveHandlerInterface
      * @param string $id
      * @return string
      */
-    public function read($id)
+    public function read($id): string|false
     {
         $rows = $this->tableGateway->select(array(
             $this->options->getIdColumn()   => $id,
@@ -106,7 +106,7 @@ class DbTableGateway implements SaveHandlerInterface
             }
             $this->destroy($id);
         }
-        return '';
+        return false;
     }
 
     /**
@@ -116,7 +116,7 @@ class DbTableGateway implements SaveHandlerInterface
      * @param string $data
      * @return bool
      */
-    public function write($id, $data)
+    public function write($id, $data): bool
     {
         $data = array(
             $this->options->getModifiedColumn() => time(),
@@ -147,7 +147,7 @@ class DbTableGateway implements SaveHandlerInterface
      * @param  string $id
      * @return bool
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         return (bool) $this->tableGateway->delete(array(
             $this->options->getIdColumn()   => $id,
@@ -161,15 +161,16 @@ class DbTableGateway implements SaveHandlerInterface
      * @param int $maxlifetime
      * @return true
      */
-    public function gc($maxlifetime)
+    public function gc($maxlifetime): int|false
     {
         $platform = $this->tableGateway->getAdapter()->getPlatform();
-        return (bool) $this->tableGateway->delete(
+        $rtrn = (bool) $this->tableGateway->delete(
             sprintf(
                 '%s < %d',
                 $platform->quoteIdentifier($this->options->getModifiedColumn()),
                 (time() - $this->lifetime)
             )
         );
+        return (true==$rtrn ? 1 : false);
     }
 }
