@@ -157,7 +157,7 @@ class SessionManager extends AbstractManager
      * @param  array $options See {@link $defaultDestroyOptions}
      * @return void
      */
-    public function destroy(array $options = null)
+    public function destroy(?array $options = null)
     {
         if (!$this->sessionExists()) {
             return;
