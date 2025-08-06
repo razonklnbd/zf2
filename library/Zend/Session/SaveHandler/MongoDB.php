@@ -122,7 +122,7 @@ class MongoDB implements SaveHandlerInterface
             $this->destroy($id);
         }
 
-        return false;
+        return '';
     }
 
     /**

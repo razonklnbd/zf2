@@ -106,7 +106,7 @@ class DbTableGateway implements SaveHandlerInterface
             }
             $this->destroy($id);
         }
-        return false;
+        return '';
     }
 
     /**
