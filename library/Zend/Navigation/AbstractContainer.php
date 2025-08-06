@@ -482,7 +482,7 @@ abstract class AbstractContainer implements Countable, RecursiveIterator
      *
      * @return bool  whether container has any pages
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return $this->valid() && $this->current()->hasPages();
     }
@@ -494,7 +494,7 @@ abstract class AbstractContainer implements Countable, RecursiveIterator
      *
      * @return Page\AbstractPage|null
      */
-    public function getChildren()
+    public function getChildren(): self|null
     {
         $hash = key($this->index);
 
@@ -502,7 +502,7 @@ abstract class AbstractContainer implements Countable, RecursiveIterator
             return $this->pages[$hash];
         }
 
-        return;
+        return null;
     }
 
     // Countable interface:
@@ -514,7 +514,7 @@ abstract class AbstractContainer implements Countable, RecursiveIterator
      *
      * @return int  number of pages in the container
      */
-    public function count()
+    public function count(): int
     {
         return count($this->index);
     }
