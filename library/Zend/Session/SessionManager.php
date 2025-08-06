@@ -48,9 +48,9 @@ class SessionManager extends AbstractManager
      * @throws Exception\RuntimeException
      */
     public function __construct(
-        Config\ConfigInterface $config = null,
-        Storage\StorageInterface $storage = null,
-        SaveHandler\SaveHandlerInterface $saveHandler = null,
+        ?Config\ConfigInterface $config = null,
+        ?Storage\StorageInterface $storage = null,
+        ?SaveHandler\SaveHandlerInterface $saveHandler = null,
         array $validators = array()
     ) {
         parent::__construct($config, $storage, $saveHandler, $validators);
@@ -64,7 +64,8 @@ class SessionManager extends AbstractManager
      */
     public function sessionExists()
     {
-        $sid = defined('SID') ? constant('SID') : false;
+        #$sid = defined('SID') ? constant('SID') : false;
+        $sid = session_status() === PHP_SESSION_ACTIVE ? session_id() : false;
         if ($sid !== false && $this->getId()) {
             return true;
         }
