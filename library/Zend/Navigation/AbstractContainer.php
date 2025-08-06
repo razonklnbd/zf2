@@ -407,7 +407,7 @@ abstract class AbstractContainer implements Countable, RecursiveIterator
      * @return Page\AbstractPage current page or null
      * @throws Exception\OutOfBoundsException  if the index is invalid
      */
-    public function current()
+    public function current(): mixed
     {
         $this->sort();
 
@@ -430,7 +430,7 @@ abstract class AbstractContainer implements Countable, RecursiveIterator
      *
      * @return string  hash code of current page
      */
-    public function key()
+    public function key(): mixed
     {
         $this->sort();
         return key($this->index);
@@ -443,7 +443,7 @@ abstract class AbstractContainer implements Countable, RecursiveIterator
      *
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         $this->sort();
         next($this->index);
@@ -456,7 +456,7 @@ abstract class AbstractContainer implements Countable, RecursiveIterator
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->sort();
         reset($this->index);
@@ -469,7 +469,7 @@ abstract class AbstractContainer implements Countable, RecursiveIterator
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         $this->sort();
         return current($this->index) !== false;
