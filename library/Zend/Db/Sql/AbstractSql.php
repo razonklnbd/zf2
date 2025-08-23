@@ -51,8 +51,8 @@ abstract class AbstractSql implements SqlInterface
      */
     protected function buildSqlString(
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
     ) {
         $this->localizeVariables();
 
@@ -94,8 +94,8 @@ abstract class AbstractSql implements SqlInterface
     protected function processExpression(
         ExpressionInterface $expression,
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null,
         $namedParameterPrefix = null
     ) {
         $namedParameterPrefix = ! $namedParameterPrefix
@@ -270,8 +270,8 @@ abstract class AbstractSql implements SqlInterface
     protected function processSubSelect(
         Select $subselect,
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
     ) {
         if ($this instanceof PlatformDecoratorInterface) {
             $decorator = clone $this;
@@ -309,8 +309,8 @@ abstract class AbstractSql implements SqlInterface
     protected function resolveColumnValue(
         $column,
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null,
         $namedParameterPrefix = null
     ) {
         $namedParameterPrefix = ! $namedParameterPrefix
@@ -352,8 +352,8 @@ abstract class AbstractSql implements SqlInterface
     protected function resolveTable(
         $table,
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
     ) {
         $schema = null;
         if ($table instanceof TableIdentifier) {
