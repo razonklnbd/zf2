@@ -497,14 +497,14 @@ class Select extends AbstractPreparableSql
         return $table . ($alias ? ' AS ' . $alias : '');
     }
 
-    protected function processStatementStart(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processStatementStart(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($this->combine !== array()) {
             return array('(');
         }
     }
 
-    protected function processStatementEnd(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processStatementEnd(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($this->combine !== array()) {
             return array(')');
@@ -519,7 +519,7 @@ class Select extends AbstractPreparableSql
      * @param ParameterContainer $parameterContainer
      * @return null|array
      */
-    protected function processSelect(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processSelect(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         $expr = 1;
 
@@ -597,7 +597,7 @@ class Select extends AbstractPreparableSql
         }
     }
 
-    protected function processJoins(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processJoins(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         if (!$this->joins) {
             return;
@@ -645,7 +645,7 @@ class Select extends AbstractPreparableSql
         return array($joinSpecArgArray);
     }
 
-    protected function processWhere(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processWhere(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($this->where->count() == 0) {
             return;
@@ -655,7 +655,7 @@ class Select extends AbstractPreparableSql
         );
     }
 
-    protected function processGroup(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processGroup(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($this->group === null) {
             return;
@@ -677,7 +677,7 @@ class Select extends AbstractPreparableSql
         return array($groups);
     }
 
-    protected function processHaving(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processHaving(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($this->having->count() == 0) {
             return;
@@ -687,7 +687,7 @@ class Select extends AbstractPreparableSql
         );
     }
 
-    protected function processOrder(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processOrder(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         if (empty($this->order)) {
             return;
@@ -717,7 +717,7 @@ class Select extends AbstractPreparableSql
         return array($orders);
     }
 
-    protected function processLimit(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processLimit(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($this->limit === null) {
             return;
@@ -729,7 +729,7 @@ class Select extends AbstractPreparableSql
         return array($platform->quoteValue($this->limit));
     }
 
-    protected function processOffset(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processOffset(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($this->offset === null) {
             return;
@@ -742,7 +742,7 @@ class Select extends AbstractPreparableSql
         return array($platform->quoteValue($this->offset));
     }
 
-    protected function processCombine(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processCombine(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($this->combine == array()) {
             return;
@@ -798,7 +798,7 @@ class Select extends AbstractPreparableSql
      * @param ParameterContainer $parameterContainer
      * @return string
      */
-    protected function resolveTable($table, PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function resolveTable($table, PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         $alias = null;
 

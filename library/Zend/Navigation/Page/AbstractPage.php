@@ -904,7 +904,7 @@ abstract class AbstractPage extends AbstractContainer
      * @throws Exception\InvalidArgumentException
      * @return AbstractPage fluent interface, returns self
      */
-    public function setParent(AbstractContainer $parent = null)
+    public function setParent(?AbstractContainer $parent = null)
     {
         if ($parent === $this) {
             throw new Exception\InvalidArgumentException(
