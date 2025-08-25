@@ -16,6 +16,7 @@ class LoginForm extends AbstractHelper implements ServiceLocatorAwareInterface {
 	 * @param ServiceLocatorInterface $serviceLocator
 	 * @return CustomHelper
 	 */
+	protected ServiceLocatorInterface $serviceLocator;
 	public function setServiceLocator(ServiceLocatorInterface $serviceLocator) {
 		$this->serviceLocator = $serviceLocator;
 		return $this;

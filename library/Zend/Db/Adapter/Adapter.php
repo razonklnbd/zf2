@@ -67,7 +67,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
      * @param Profiler\ProfilerInterface $profiler
      * @throws Exception\InvalidArgumentException
      */
-    public function __construct($driver, Platform\PlatformInterface $platform = null, ResultSet\ResultSetInterface $queryResultPrototype = null, Profiler\ProfilerInterface $profiler = null)
+    public function __construct($driver, ?Platform\PlatformInterface $platform = null, ?ResultSet\ResultSetInterface $queryResultPrototype = null, ?Profiler\ProfilerInterface $profiler = null)
     {
         // first argument can be an array of parameters
         $parameters = array();
@@ -164,7 +164,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
      * @throws Exception\InvalidArgumentException
      * @return Driver\StatementInterface|ResultSet\ResultSet
      */
-    public function query($sql, $parametersOrQueryMode = self::QUERY_MODE_PREPARE, ResultSet\ResultSetInterface $resultPrototype = null)
+    public function query($sql, $parametersOrQueryMode = self::QUERY_MODE_PREPARE, ?ResultSet\ResultSetInterface $resultPrototype = null)
     {
         if (is_string($parametersOrQueryMode) && in_array($parametersOrQueryMode, array(self::QUERY_MODE_PREPARE, self::QUERY_MODE_EXECUTE))) {
             $mode = $parametersOrQueryMode;

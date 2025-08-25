@@ -421,7 +421,7 @@ class Fieldset extends Element implements FieldsetInterface
      *
      * @return int
      */
-    public function count()
+    public function count():int
     {
         return $this->iterator->count();
     }
@@ -431,7 +431,7 @@ class Fieldset extends Element implements FieldsetInterface
      *
      * @return PriorityList
      */
-    public function getIterator()
+    public function getIterator():Traversable
     {
         return $this->iterator;
     }

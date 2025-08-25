@@ -176,7 +176,7 @@ class TemplateMapResolver implements IteratorAggregate, ResolverInterface
      * @return string
      */
     #[\ReturnTypeWillChange]
-    public function resolve($name, Renderer $renderer = null)
+    public function resolve($name, ?Renderer $renderer = null)
     {
         return $this->get($name);
     }

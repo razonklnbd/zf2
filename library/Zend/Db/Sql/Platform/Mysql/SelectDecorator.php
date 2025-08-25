@@ -38,7 +38,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         }
     }
 
-    protected function processLimit(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processLimit(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($this->limit === null && $this->offset !== null) {
             return array('');
@@ -54,7 +54,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         return array($this->limit);
     }
 
-    protected function processOffset(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processOffset(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($this->offset === null) {
             return;
