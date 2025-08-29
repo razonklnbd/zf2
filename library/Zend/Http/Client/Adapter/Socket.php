@@ -183,11 +183,11 @@ class Socket implements HttpAdapter, StreamInterface
     public function connect($host, $port = 80, $secure = false)
     {
         // If we are connected to the wrong host, disconnect first
-        $connectedHost = (strpos($this->connectedTo[0], '://'))
-            ? substr($this->connectedTo[0], (strpos($this->connectedTo[0], '://') + 3), strlen($this->connectedTo[0]))
-            : $this->connectedTo[0];
+        $connectedHost = (!empty($this->connectedTo[0]) && is_string($this->connectedTo[0]) && strpos($this->connectedTo[0], '://') !== false)
+            ? substr($this->connectedTo[0], strpos($this->connectedTo[0], '://') + 3)
+            : ($this->connectedTo[0] ?? '');
 
-        if ($connectedHost != $host || $this->connectedTo[1] != $port) {
+        if ($connectedHost != $host || ($this->connectedTo[1] ?? null) != $port) {
             if (is_resource($this->socket)) {
                 $this->close();
             }

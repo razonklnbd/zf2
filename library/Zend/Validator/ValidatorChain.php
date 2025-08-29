@@ -53,7 +53,7 @@ class ValidatorChain implements
      *
      * @return int
      */
-    public function count()
+    public function count():int
     {
         return count($this->validators);
     }
@@ -90,7 +90,7 @@ class ValidatorChain implements
      * @param  null|array $options Options to pass to validator constructor (if not already instantiated)
      * @return ValidatorInterface
      */
-    public function plugin($name, array $options = null)
+    public function plugin($name, ?array $options = null)
     {
         $plugins = $this->getPluginManager();
         return $plugins->get($name, $options);

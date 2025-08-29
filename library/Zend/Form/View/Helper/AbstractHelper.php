@@ -281,7 +281,10 @@ abstract class AbstractHelper extends BaseAbstractHelper
             return $this->doctypeHelper;
         }
 
-        if (method_exists($this->view, 'plugin')) {
+//        if (method_exists($this->view, 'plugin')) {
+//            $this->doctypeHelper = $this->view->plugin('doctype');
+//        }
+        if ($this->doctypeHelper !== null && method_exists($this->doctypeHelper, 'plugin')) {
             $this->doctypeHelper = $this->view->plugin('doctype');
         }
 
@@ -303,7 +306,11 @@ abstract class AbstractHelper extends BaseAbstractHelper
             return $this->escapeHtmlHelper;
         }
 
-        if (method_exists($this->view, 'plugin')) {
+//        if (method_exists($this->view, 'plugin')) {
+//            $this->escapeHtmlHelper = $this->view->plugin('escapehtml');
+//        }
+
+        if ($this->escapeHtmlHelper !== null && method_exists($this->escapeHtmlHelper, 'plugin')) {
             $this->escapeHtmlHelper = $this->view->plugin('escapehtml');
         }
 
@@ -325,7 +332,10 @@ abstract class AbstractHelper extends BaseAbstractHelper
             return $this->escapeHtmlAttrHelper;
         }
 
-        if (method_exists($this->view, 'plugin')) {
+//        if (method_exists($this->view, 'plugin')) {
+//            $this->escapeHtmlAttrHelper = $this->view->plugin('escapehtmlattr');
+//        }
+        if ($this->escapeHtmlAttrHelper !== null && method_exists($this->escapeHtmlAttrHelper, 'plugin')) {
             $this->escapeHtmlAttrHelper = $this->view->plugin('escapehtmlattr');
         }
 
