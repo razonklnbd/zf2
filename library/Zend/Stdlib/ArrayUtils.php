@@ -223,36 +223,27 @@ abstract class ArrayUtils
             if (is_array($iterator)) {
                 return $iterator;
             }
-
             return iterator_to_array($iterator);
         }
 
-        if (method_exists($iterator, 'toArray')) {
+        if (is_object($iterator) && method_exists($iterator, 'toArray')) {
             return $iterator->toArray();
         }
 
-        $array = array();
+        $array = [];
         foreach ($iterator as $key => $value) {
             if (is_scalar($value)) {
                 $array[$key] = $value;
-                continue;
-            }
-
-            if ($value instanceof Traversable) {
+            } elseif ($value instanceof Traversable || is_array($value)) {
                 $array[$key] = static::iteratorToArray($value, $recursive);
-                continue;
+            } else {
+                $array[$key] = $value;
             }
-
-            if (is_array($value)) {
-                $array[$key] = static::iteratorToArray($value, $recursive);
-                continue;
-            }
-
-            $array[$key] = $value;
         }
 
         return $array;
     }
+
 
     /**
      * Merge two arrays together.

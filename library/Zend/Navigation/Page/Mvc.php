@@ -364,7 +364,7 @@ class Mvc extends AbstractPage
      *                            which sets no params.
      * @return Mvc  fluent interface, returns self
      */
-    public function setParams(array $params = null)
+    public function setParams(?array $params = null)
     {
         $this->params = empty($params) ? array() : $params;
         $this->hrefCache = null;

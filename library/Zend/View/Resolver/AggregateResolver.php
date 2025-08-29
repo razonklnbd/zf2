@@ -90,7 +90,7 @@ class AggregateResolver implements Countable, IteratorAggregate, ResolverInterfa
      * @return false|string
      */
     #[\ReturnTypeWillChange]
-    public function resolve($name, Renderer $renderer = null)
+    public function resolve($name, ?Renderer $renderer = null)
     {
         $this->lastLookupFailure      = false;
         $this->lastSuccessfulResolver = null;

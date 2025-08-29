@@ -124,7 +124,7 @@ class ServiceManager implements ServiceLocatorInterface
      *
      * @param ConfigInterface $config
      */
-    public function __construct(ConfigInterface $config = null)
+    public function __construct(?ConfigInterface $config = null)
     {
         if ($config) {
             $config->configureServiceManager($this);
@@ -926,36 +926,56 @@ class ServiceManager implements ServiceLocatorInterface
      */
     protected function createServiceViaCallback($callable, $cName, $rName)
     {
-        static $circularDependencyResolver = array();
+        static $circularDependencyResolver = [];
         $depKey = spl_object_hash($this) . '-' . $cName;
 
         if (isset($circularDependencyResolver[$depKey])) {
-            $circularDependencyResolver = array();
-            throw new Exception\CircularDependencyFoundException('Circular dependency for LazyServiceLoader was found for instance ' . $rName);
+            $circularDependencyResolver = [];
+            throw new Exception\CircularDependencyFoundException(
+                'Circular dependency for LazyServiceLoader was found for instance ' . $rName
+            );
         }
 
         try {
             $circularDependencyResolver[$depKey] = true;
+
+            // Call factory
             $instance = call_user_func($callable, $this, $cName, $rName);
+
             unset($circularDependencyResolver[$depKey]);
+
         } catch (Exception\ServiceNotFoundException $e) {
             unset($circularDependencyResolver[$depKey]);
             throw $e;
+
         } catch (\Exception $e) {
             unset($circularDependencyResolver[$depKey]);
-            #die($e->getCode().': '.$e->getMessage().' @'.__LINE__.': '.__FILE__);
+
+            // 👉 Preserve original exception details
             throw new Exception\ServiceNotCreatedException(
-                sprintf('An exception was raised while creating "%s"; no instance returned [err: "%s" | code: %s]', $rName, $e->getMessage(), $e->getCode()),
-                0,
+                sprintf(
+                    'An exception was raised while creating "%s"; original error: %s (%s) in %s:%d',
+                    $rName,
+                    $e->getMessage(),
+                    get_class($e),
+                    $e->getFile(),
+                    $e->getLine()
+                ),
+                (int) $e->getCode(),
                 $e
             );
         }
+
         if ($instance === null) {
-            throw new Exception\ServiceNotCreatedException('The factory was called but did not return an instance.');
+            throw new Exception\ServiceNotCreatedException(sprintf(
+                'The factory for "%s" was called but did not return an instance.',
+                $rName
+            ));
         }
 
         return $instance;
     }
+
 
     /**
      * Retrieve a keyed list of all registered services. Handy for debugging!

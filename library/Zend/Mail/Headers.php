@@ -357,7 +357,11 @@ class Headers implements Countable, Iterator
      *
      * @return mixed
      */
+<<<<<<< HEAD
     public function key():mixed
+=======
+    public function key(): mixed
+>>>>>>> 96473fae41fa8f888810b0f5a0ef15f4e7e1f575
     {
         return key($this->headers);
     }
@@ -401,7 +405,11 @@ class Headers implements Countable, Iterator
      *
      * @return int count of currently known headers
      */
+<<<<<<< HEAD
     public function count(): int
+=======
+    public function count():int
+>>>>>>> 96473fae41fa8f888810b0f5a0ef15f4e7e1f575
     {
         return count($this->headers);
     }

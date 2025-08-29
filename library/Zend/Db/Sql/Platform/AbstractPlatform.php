@@ -95,7 +95,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
      *
      * @throws Exception\RuntimeException
      */
-    public function getSqlString(PlatformInterface $adapterPlatform = null)
+    public function getSqlString(?PlatformInterface $adapterPlatform = null)
     {
         if (! $this->subject instanceof SqlInterface) {
             throw new Exception\RuntimeException('The subject does not appear to implement Zend\Db\Sql\SqlInterface, thus calling prepareStatement() has no effect');

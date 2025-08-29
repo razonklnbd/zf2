@@ -147,7 +147,12 @@ class AddressList implements Countable, Iterator
      */
     public function get($email)
     {
-        $email = strtolower($email);
+        if (!is_string($email) || $email === '') {
+            return false; // invalid input
+        }
+
+        $email = strtolower(trim($email));
+
         if (!isset($this->addresses[$email])) {
             return false;
         }
@@ -155,15 +160,21 @@ class AddressList implements Countable, Iterator
         return $this->addresses[$email];
     }
 
+
     /**
      * Delete an address from the list
      *
      * @param  string $email
      * @return bool
      */
-    public function delete($email)
+    public function delete($email): bool
     {
-        $email = strtolower($email);
+        if (!is_string($email) || $email === '') {
+            return false; // invalid input
+        }
+
+        $email = strtolower(trim($email));
+
         if (!isset($this->addresses[$email])) {
             return false;
         }
@@ -171,7 +182,6 @@ class AddressList implements Countable, Iterator
         unset($this->addresses[$email]);
         return true;
     }
-
     /**
      * Return count of addresses
      *
@@ -189,17 +199,28 @@ class AddressList implements Countable, Iterator
      * empty.
      * @see addresses
      */
+<<<<<<< HEAD
     public function rewind():void
     {
          reset($this->addresses);
+=======
+    public function rewind(): void
+    {
+        reset($this->addresses);
+>>>>>>> 96473fae41fa8f888810b0f5a0ef15f4e7e1f575
     }
+
 
     /**
      * Return current item in iteration
      *
      * @return Address
      */
+<<<<<<< HEAD
     public function current(): mixed
+=======
+    public function current():mixed
+>>>>>>> 96473fae41fa8f888810b0f5a0ef15f4e7e1f575
     {
         return current($this->addresses);
     }
@@ -209,7 +230,11 @@ class AddressList implements Countable, Iterator
      *
      * @return string
      */
+<<<<<<< HEAD
     public function key():mixed
+=======
+    public function key(): mixed
+>>>>>>> 96473fae41fa8f888810b0f5a0ef15f4e7e1f575
     {
         return key($this->addresses);
     }
@@ -221,9 +246,15 @@ class AddressList implements Countable, Iterator
      * internal array pointer, or false if there are no more elements.
      * @see addresses
      */
+<<<<<<< HEAD
     public function next():void
     {
          next($this->addresses);
+=======
+    public function next(): void
+    {
+        next($this->addresses);
+>>>>>>> 96473fae41fa8f888810b0f5a0ef15f4e7e1f575
     }
 
     /**
@@ -231,11 +262,15 @@ class AddressList implements Countable, Iterator
      *
      * @return bool
      */
+<<<<<<< HEAD
     public function valid():bool
+=======
+    public function valid(): bool
+>>>>>>> 96473fae41fa8f888810b0f5a0ef15f4e7e1f575
     {
-        $key = key($this->addresses);
-        return ($key !== null && $key !== false);
+        return key($this->addresses) !== null;
     }
+
 
     /**
      * Create an address object

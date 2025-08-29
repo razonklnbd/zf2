@@ -59,29 +59,47 @@ class DefaultRouteMatcher implements RouteMatcherInterface
      */
     public function __construct(
         $route,
-        array $constraints = array(),
-        array $defaults = array(),
-        array $aliases = array(),
-        array $filters = null,
-        array $validators = null
+        array $constraints = [],        
+        array $defaults = [],
+        array $aliases = [],
+        ?array $filters = null,
+        ?array $validators = null
     ) {
         $this->defaults = $defaults;
-        $this->constraints = $constraints;
-        $this->aliases = $aliases;
+        $this->aliases  = $aliases;
 
+        // --- Handle deprecated constraints ---
+        if (!empty($constraints)) {
+            trigger_error(
+                __CLASS__ . '::$constraints is deprecated. Please use $validators instead.',
+                E_USER_DEPRECATED
+            );
+
+            // Convert regex constraints to Regex validator instances
+            foreach ($constraints as $name => $pattern) {
+                $this->validators[$name] = new \Laminas\Validator\Regex(['pattern' => '/^' . $pattern . '$/']);
+            }
+        }
+
+        // --- Handle filters ---
         if ($filters !== null) {
             foreach ($filters as $name => $filter) {
-                if (!$filter instanceof FilterInterface) {
-                    throw new Exception\InvalidArgumentException('Cannot use ' . gettype($filters) . ' as filter for ' . __CLASS__);
+                if (!$filter instanceof \Laminas\Filter\FilterInterface) {
+                    throw new \InvalidArgumentException(
+                        'Cannot use ' . gettype($filter) . ' as filter for ' . __CLASS__
+                    );
                 }
                 $this->filters[$name] = $filter;
             }
         }
 
+        // --- Handle validators ---
         if ($validators !== null) {
             foreach ($validators as $name => $validator) {
-                if (!$validator instanceof ValidatorInterface) {
-                    throw new Exception\InvalidArgumentException('Cannot use ' . gettype($validator) . ' as validator for ' . __CLASS__);
+                if (!$validator instanceof \Laminas\Validator\ValidatorInterface) {
+                    throw new \InvalidArgumentException(
+                        'Cannot use ' . gettype($validator) . ' as validator for ' . __CLASS__
+                    );
                 }
                 $this->validators[$name] = $validator;
             }
@@ -89,6 +107,7 @@ class DefaultRouteMatcher implements RouteMatcherInterface
 
         $this->parts = $this->parseDefinition($route);
     }
+
 
     /**
      * Parse a route definition.
