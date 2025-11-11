@@ -62,11 +62,9 @@ class BaseInputFilter implements
      *
      * @return int
      */
-<<<<<<< HEAD
-    public function count(): int
-=======
+
     public function count():int
->>>>>>> 96473fae41fa8f888810b0f5a0ef15f4e7e1f575
+
     {
         return count($this->inputs);
     }

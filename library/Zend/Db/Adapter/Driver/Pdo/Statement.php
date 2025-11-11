@@ -211,6 +211,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         if (!$this->isPrepared) {
             $this->prepare();
         }
+        // echo '<br/>after prepare @'.$parameters.': '.__FILE__.'<br />';
 
         /** START Standard ParameterContainer Merging Block */
         if (!$this->parameterContainer instanceof ParameterContainer) {

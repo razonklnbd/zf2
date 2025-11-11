@@ -48,7 +48,12 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      * @param $parameters
      * @return null
      */
-    protected function processLimitOffset(PlatformInterface $platform, ?DriverInterface $driver = null, ?ParameterContainer $parameterContainer = null, &$sqls, &$parameters)
+ 
+    protected function processLimitOffset(
+        PlatformInterface $platform, 
+        ?DriverInterface $driver = null, 
+        ?ParameterContainer $parameterContainer = null, 
+        &$sqls= null, &$parameters= null)
     {
         if(is_null($sqls)) throw new \Exception('$sqls NULL');
         if(is_null($parameters)) throw new \Exception('$parameters NULL');

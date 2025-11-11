@@ -171,13 +171,14 @@ class AuthenticationController extends AbstractActionController {
         if ($sessSaveHandler->read($this->authService->getStorage()->getSessionId()) && $this->authService->hasIdentity()) {
                     #die('@'.__LINE__.': '.$this->authService->getStorage()->getSessionManager()->getSaveHandler()->read($this->authService->getStorage()->getSessionId()));
 			//redirect to success controller...
-			return $this->redirect()->toRoute('login', array('action' => 'welcome'));
+			#die('@'.__LINE__.': Logged In | '.__FILE__.'<br />'.$this->getUrlAfterLoginSuccess());
+            return $this->redirect()->toUrl($this->getUrlAfterLoginSuccess());
 		}
 		#echo 'current: '.microtime(true).' @'.__LINE__.'<br />';
 		if($this->authService->isAnonymousUserLoggedIn()){
                     #die('anon logged in!!!!!! @'.__LINE__.': '.__FILE__);
 			if($this->isAnonymousLoginEnabled()){
-				return $this->redirect()->toRoute('login', array('action' => 'anonymous-login'));
+				return $this->redirect()->toUrl($this->getUrlAfterLoginSuccess());
 			}
 			$this->authService->clearIdentity();
 		}
@@ -208,16 +209,9 @@ class AuthenticationController extends AbstractActionController {
 	    $debug=false;
 		if(true==$debug) echo 'current: '.microtime(true).' @'.__LINE__.'<br />'.PHP_EOL;
 		$request = $this->getRequest();
-                $myurl=$this->plugin('url');
-                $urlAfterLoginSuccess=$this->getUrlAfterLoginSuccess($myurl->fromRoute('login', array(
-                            'action' => 'welcome',
-                    ), array('force_canonical' => true)));
+        $urlAfterLoginSuccess=$this->getUrlAfterLoginSuccess();
+        #die('$urlAfterLoginSuccess: '.$urlAfterLoginSuccess.' @'.__LINE__.': '.__FILE__);
 		#$request = $this->getRequest();
-		$getQuery = $request->getUri()->getQueryAsArray();
-		if(array_key_exists('url-after-login-success', $getQuery)){
-		    $urlAfterLoginSuccess=urldecode($getQuery['url-after-login-success']);
-		    $this->authService->setAfterLoginUrl($urlAfterLoginSuccess);
-		}
 		if ($request->isPost()) {
 		    if(true==$debug) echo 'current: '.microtime(true).' @'.__LINE__.'<br />'.PHP_EOL;
 			$form->setData($request->getPost());
@@ -237,7 +231,7 @@ class AuthenticationController extends AbstractActionController {
 						$this->authService->setAfterLoginUrl($getQuery['url-after-login-success']);
 					}*/
 					#die('logout url: '.$myurl->fromRoute('login', array('action' => 'logout'), array('force_canonical' => true)));
-					$this->authService->setLogoutUrl($myurl->fromRoute('login', array('action' => 'logout'), array('force_canonical' => true)));
+					$this->authService->setLogoutUrl($this->url()->fromRoute('login', array('action' => 'logout'), array('force_canonical' => true)));
 					$this->authService->setLoggedIn($request->getServer('REMOTE_ADDR'), $request->getServer('HTTP_USER_AGENT'));
 					if($this->isContentTrackerExists()) $this->getContentTracker()->loggedInAsRegisteredUser($dataform['loginId']);
 
@@ -249,7 +243,7 @@ class AuthenticationController extends AbstractActionController {
 					$this->authService->setAfterLoginUrl();
 					try {
 					    $postLoginRoutine=$this->getServiceLocator()->get('AuthV2\\PostLoginRoutine');
-					    $postLoginRoutine($this->authService);
+						if(!empty($postLoginRoutine)) $postLoginRoutine($this->authService);
 					} catch (\Exception $e) {
 					    if(true==$debug) die('@'.__LINE__.': '.__FILE__.'<br />ERR: '.$e->getMessage().'<pre>'.$e->getTraceAsString().'</pre>');
 					}
@@ -292,6 +286,22 @@ class AuthenticationController extends AbstractActionController {
 					    echo '<pre>'.$bkTrace(debug_backtrace());
 					    die('@'.__LINE__.': urlAfterLoginSuccess: '.$urlAfterLoginSuccess.' | '.__FILE__);
 					} */
+					$objLoggedInUser=$this->authService->getRecentlyLoggedInUserObject();
+					if($objLoggedInUser instanceof \Lib3rdParty\Authentication\AuthenticatedUserWithForcePasswordResetInterface && $objLoggedInUser->isPasswordNeedForceReset()){
+					    $this->authService->clearIdentity();
+					    /**
+					     * need to redirect with one time secret code to access force reset password page
+					     */
+					    $d2p=array('id'=>$objLoggedInUser->getTextId(), 'tm'=>time());
+					    $d2p['secret']=md5($d2p['tm'].$objLoggedInUser->getCredential());
+					    return $this->redirect()->toRoute('login', array('action'=>'force-reset-password'), array('query'=>array('code'=>base64_encode(serialize($d2p)))));
+    					/* die('@'.__LINE__.': '.__FILE__.'<pre>'.print_r(array(
+    					    $urlAfterLoginSuccess,
+    					    strval($objLoggedInUser->isPasswordNeedForceReset()),
+    					    get_class($objLoggedInUser),
+    					    $objLoggedInUser->getArrayCopy(),
+    					), true)); */
+					}
 					return $this->plugin('redirect')->toUrl($urlAfterLoginSuccess);
 				} else {
 				    if(true==$debug) echo 'current: '.microtime(true).' @'.__LINE__.'<br />'.PHP_EOL;
@@ -300,6 +310,78 @@ class AuthenticationController extends AbstractActionController {
 			}elseif(true==$debug) die('form NOT valid! @'.__LINE__.': '.__FILE__);
 		}
 		return $this;
+	}
+	public function forceResetPasswordAction(){
+	    $sessSaveHandler=$this->authService->getStorage()->getSessionManager()->getSaveHandler();
+	    if(is_null($sessSaveHandler) || !is_object($sessSaveHandler)){
+	        $this->flashMessenger()->addErrorMessage('Session save handler NOT found!!! Unable to proceed for authentication');
+	        return $this->redirect()->toRoute('login', array('action' => 'invalid-session'));
+	    }
+	    if ($sessSaveHandler->read($this->authService->getStorage()->getSessionId()) && $this->authService->hasIdentity()) {
+	        return $this->redirect()->toUrl($this->getUrlAfterLoginSuccess());
+	    }
+	    if($this->authService->isAnonymousUserLoggedIn()){
+	        if($this->isAnonymousLoginEnabled()){
+	            return $this->redirect()->toUrl($this->getUrlAfterLoginSuccess());
+	        }
+	        $this->authService->clearIdentity();
+	        return $this->redirect()->toRoute('login');
+	    }
+	    $codeAtUrl=$this->getQueryAsArray('code');
+	    if(empty($codeAtUrl)) return $this->redirect()->toRoute('login');
+	    $dataDecoded=@base64_decode($codeAtUrl);
+	    if(empty($dataDecoded)) return $this->redirect()->toRoute('login');
+	    $data=@unserialize($dataDecoded);
+	    if(empty($data) || !is_array($data) || !array_key_exists('id', $data) || empty($data['id']) || !array_key_exists('tm', $data) || empty($data['tm']) || !array_key_exists('secret', $data) || empty($data['secret'])){
+	        $this->flashMessenger()->addErrorMessage('Invalid Link');
+	        return $this->redirect()->toRoute('login');
+	    }
+	    $user=$this->getServiceLocator()->get('AuthV2\\User\\UserTable')->getUserToLogin($data['id']);
+	    if(!($user instanceof \Lib3rdParty\Authentication\AuthenticatedUserWithForcePasswordResetInterface)){
+	        $this->flashMessenger()->addErrorMessage('Invalid User');
+	        return $this->redirect()->toRoute('login');
+	    }
+	    if($data['secret']!=md5($data['tm'].$user->getCredential())){
+	        $this->flashMessenger()->addErrorMessage('Unauthorized Link');
+	        return $this->redirect()->toRoute('login');
+	    }
+	    if(false==$user->isPasswordNeedForceReset()){
+	        $this->flashMessenger()->addErrorMessage('Wrong Link');
+	        return $this->redirect()->toRoute('login');
+	    }
+	    if($this->getRequest()->isPost()){
+	        $anyErrorOccured=false;
+	        $postData=$this->getRequest()->getPost()->toArray();
+	        $fields=array('oPass'=>'Password', 'nPass'=>'New Password', 'cPass'=>'Confirm Password');
+	        foreach($fields as $fld=>$fName){
+	            if(!array_key_exists($fld, $postData) || strlen(trim($postData[$fld]))<=0){
+	                $anyErrorOccured=true;
+	                $this->flashMessenger()->addErrorMessage($fName.' Empty OR NOT Set!!!');
+	            }
+	        }
+	        if(false==$anyErrorOccured){
+	            if($postData['nPass']!=$postData['cPass']){
+	                $anyErrorOccured=true;
+	                $this->flashMessenger()->addErrorMessage('New Password and Confirm Password Mismatched!!!');
+	            }
+	            if($postData['oPass']==$postData['cPass']){
+	                $anyErrorOccured=true;
+	                $this->flashMessenger()->addErrorMessage('Must Change Old Password!!!');
+	            }
+	        }
+	        $clsr2check=$this->getServiceLocator()->get('AuthV2\\User\\UserTable')->getPasswordCheckingClosure();
+	        if(array_key_exists('oPass', $postData) && strlen(trim($postData['oPass']))>0 && false==$clsr2check($user->getArrayCopy(), $postData['oPass'])){
+	            $anyErrorOccured=true;
+	            $this->flashMessenger()->addErrorMessage('Current Password NOT Matched!!! Unable to change.');
+	        }
+	        if(true==$anyErrorOccured) return $this->redirect()->toRoute('login', array('action'=>'force-reset-password'), array('query'=>array('code'=>$codeAtUrl)));
+	        #die('data posted!!! @'.__LINE__.': '.__FILE__);
+	        $user->forceResetPassword($postData['nPass']);
+	        $this->flashMessenger()->addSuccessMessage('Password Changed');
+	        return $this->redirect()->toRoute('login');
+	    }
+	    return $this->getAcceptableViewModel(array('user'=>$user));
+	    #die('<pre>'.print_r($user->getArrayCopy(), true));
 	}
 	static function isClosure($arg) {
 		$test = function(){};
@@ -364,7 +446,7 @@ class AuthenticationController extends AbstractActionController {
 					'action' => 'anonymous-login',
 				), array('force_canonical' => true)));
 			$form = $this->getServiceLocator()->get('FormElementManager')->get(current(explode('\\', __NAMESPACE__)).'\\Form\\AnonymousForm');
-			/** @var \TfwAuth\Form\AnonymousForm $form **/
+			/** @var \AuthV2\Form\AnonymousForm $form **/
 			//initialize error...
 			$fpMessage='';
 			$fpMessageX=$this->flashMessenger()->getMessages();
@@ -408,12 +490,15 @@ class AuthenticationController extends AbstractActionController {
 		}
 		return new ViewModel($arr2pass);
 	}
-	private function getUrlAfterLoginSuccess($pUrlAfterLoginSuccess=NULL){
-            if($this->getServiceLocator()->has('AuthV2\\AfterLoginSuccessLink')){
-                $data=$this->getServiceLocator()->has('AuthV2\\AfterLoginSuccessLink');
-                if(!empty($data)) $pUrlAfterLoginSuccess=$data;
-            }
-            /*
+	private function getUrlAfterLoginSuccess($pUrlAfterLoginSuccess=null){
+        if($this->getServiceLocator()->has('AuthV2\\AfterLoginSuccessLink')){
+            $data=$this->getServiceLocator()->has('AuthV2\\AfterLoginSuccessLink');
+            if(!empty($data)) return $data;
+        }
+        if(is_null($pUrlAfterLoginSuccess)) $pUrlAfterLoginSuccess=$this->url()->fromRoute('login', array(
+            'action' => 'welcome',
+        ), array('force_canonical' => true));
+        /*
 		$config = $this->getConfigData();
 		if(!empty($config['urlAfterLoginSuccess'])){
 			$pUrlAfterLoginSuccess=(self::isClosure($config['urlAfterLoginSuccess'])?$config['urlAfterLoginSuccess']($this->plugin('url')):trim($config['urlAfterLoginSuccess']));
@@ -422,7 +507,7 @@ class AuthenticationController extends AbstractActionController {
                 # */
 		$sessurl=$pUrlAfterLoginSuccess=$this->authService->getAfterLoginUrl($pUrlAfterLoginSuccess);
 		$getQuery = $this->getRequest()->getUri()->getQueryAsArray();
-		if(array_key_exists('url-after-login-success', $getQuery)) $url2compr=$pUrlAfterLoginSuccess=$getQuery['url-after-login-success'];
+		if(array_key_exists('url-after-login-success', $getQuery)) $url2compr=$pUrlAfterLoginSuccess=urldecode($getQuery['url-after-login-success']);
 		$postData=$this->getRequest()->getPost()->getArrayCopy();
 		if(array_key_exists('redir2url', $postData) && !empty($postData['redir2url'])){
 			$url2compr=$pUrlAfterLoginSuccess=$postData['redir2url'];
@@ -468,6 +553,47 @@ class AuthenticationController extends AbstractActionController {
     public function passwordAction(){
         #die('schema: '.$this->getServiceLocator()->get('Oacs\Model\OacsUserTable')->getTableGateway()->getAdapter()->getDriver()->getConnection()->getCurrentSchema());
         #die('$this->getCompanyTextId(): '.$this->getCompanyTextId());
+		try {
+			$uid = $this->params()->fromRoute('param1');
+			$upass = $this->params()->fromRoute('param2');
+			if(!empty($uid) && !empty($upass)){
+				$errorMessages = $errorLogs = array();
+				$cid = '[NO Active Company Assigned]';
+				$u2login = '[User Not Found!!!]';
+				$encPass = '[************]';
+				try {
+					$cid = $this->getCurrentActiveCompany()->getTextId();
+				} catch (\Exception $e2) {
+					$errorMessages[] = $e2->getMessage();
+					$errorLogs[] = $e2->getTraceAsString();
+				}
+				try {
+					$uTable = $this->getServiceLocator()->get('AuthV2\\User\\UserTable');
+					$u2login = $uTable->getUserToLogin($uid);
+					try {
+						$encPass = $u2login->getEncryptedPassword($upass);
+						try {
+							echo('schema: '.$uTable->getAdapter()->getDriver()->getConnection()->getCurrentSchema().' | table: '.$uTable->getThisTableName().'<br />'.PHP_EOL);
+						} catch (\Exception $e5) {
+							$errorMessages[] = $e5->getMessage();
+							$errorLogs[] = $e5->getTraceAsString();
+						}
+					} catch (\Exception $e4) {
+						$errorMessages[] = $e4->getMessage();
+						$errorLogs[] = $e4->getTraceAsString();
+					}
+				} catch (\Exception $e3) {
+					$errorMessages[] = $e3->getMessage();
+					$errorLogs[] = $e3->getTraceAsString();
+				}
+				echo('$this->getCompanyTextId(): '.$cid.' | password: '.$encPass.'<br />');
+				die('errors: '.print_r($errorMessages, true).'<br />'.print_r($errorLogs, true));
+			}else die('user or password parameter empty!!! e.g. [base link]/login/password/&lt;user parameter&gt;/&lt;password parameter&gt;<br />'.__LINE__.': '.__FILE__);
+		} catch (\Exception $e1) {
+			die('user or password parameter not set!!! e.g. [base link]/login/password/&lt;user parameter&gt;/&lt;password parameter&gt;<br />'.__LINE__.': '.__FILE__);
+		}
+		
+		
         try {
             die('$this->getCompanyTextId(): '.$this->getCurrentActiveCompany()->getTextId().' | password: '.$this->getServiceLocator()->get('AuthV2\\User\\UserTable')->getUserToLogin($this->params()->fromRoute('param1'))->getEncryptedPassword($this->params()->fromRoute('param2')));
         } catch (\Exception $e) {

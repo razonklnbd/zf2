@@ -43,6 +43,7 @@ class CrudController extends AbstractCrudController {
         #$cndn['adapter']=$this->getUserTable()->getAdapter();
         $cndn['updating']=$this->isUpdating();
         $cndn['updatingData']=($this->isUpdating() ? $this->getSelectedRow()->getArrayCopy() : array());
+        $cndn[$this->getVariableNameForSelectedObject()]=(($this->isUpdating() || $this->isReading() || $this->isDeleting()) ? $this->getSelectedRow() : null);
         #$cndn['id']=($this->isUpdating() ? $this->getSelectedRow()->id : null);
         #if($this->isUpdating()) $cndn['handlerAdminTextId']=$this->getSelectedRow()->getHandlerAdminTextId();
         #$cndn['requiredFields']['qmsProductImageData']=true;
